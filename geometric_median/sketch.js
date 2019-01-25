@@ -1,5 +1,5 @@
 
-// Figure object
+// Points object
 
 let EPS = 0.1;
 
@@ -19,7 +19,7 @@ let min_ternary_search = function(f, l, r) {
 	return (l + r) / 2;
 }
 
-let Figure = function() {
+let Points = function() {
 
 	this.p = [];
 	this.min = createVector(-width, -height);
@@ -74,19 +74,19 @@ let Figure = function() {
 	}
 }
 
-let figure;
+let points;
 
 function setup() {
 	createCanvas(600, 600);
-	figure = new Figure();
+	points = new Points();
 }
 
 function draw() {
 	background(57);
-	figure.show();
+	points.show();
 }
 
 function mousePressed() {
 	if (mouseButton === LEFT)
-		figure.add(mouseX, mouseY);
+		points.add(mouseX, mouseY);
 }

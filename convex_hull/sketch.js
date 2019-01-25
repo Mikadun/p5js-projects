@@ -9,7 +9,7 @@ let get_rotate = function(p_start, p_end, p) {
 	return (p_end.x - p_start.x) * (p.y - p_end.y) - (p_end.y - p_start.y) * (p.x - p_end.x);
 }
 
-let Figure = function() {
+let Points = function() {
 
 	this.points = [];
 	this.convex_hull = [];
@@ -68,7 +68,7 @@ let Figure = function() {
 	}
 }
 
-let figure = new Figure();
+let points = new Points();
 
 function setup() {
 	createCanvas(600, 600);
@@ -76,10 +76,10 @@ function setup() {
 
 function draw() {
 	background(57);
-	figure.show();
+	points.show();
 }
 
 function mousePressed() {
 	if (mouseButton === LEFT)
-		figure.add(mouseX, mouseY);
+		points.add(mouseX, mouseY);
 }
