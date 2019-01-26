@@ -1,7 +1,7 @@
 
-// Figure object
+// Points object
 
-let Figure = function() {
+let Points = function() {
 
 	this.p = [];
 
@@ -35,7 +35,7 @@ let Figure = function() {
 			let f_cond = p[i].y < point.y && p[j].y >= point.y || p[j].y < point.y && p[i].y >= point.y;
 			let s_cond = p[i].x + (point.y - p[i].y) / (p[j].y - p[i].y) * (p[j].x - p[i].x) < point.x;
 				if (f_cond && s_cond)
-						result = !result;
+					result = !result;
 				j = i;
 		}
 
@@ -49,7 +49,7 @@ let Figure = function() {
 	return this;
 }
 
-let PointFigure = function(x, y) {
+let CheckPoint = function(x, y) {
 
 	this.x = x;
 	this.y = y;
@@ -69,34 +69,41 @@ let PointFigure = function(x, y) {
 	}
 }
 
-let figure;
-let point;
+let points;
+let points_to_check;
 
 function setup() {
 	createCanvas(600, 600);
-	figure = Figure();
-	point = null;
+	points = Points();
+	points_to_check = [];
+	createSome(100);
 }
 
 function draw() {
 	background(57);
-	figure.show();
-	if(point) {
-		point.update(figure.contain(point));
-		point.show();
+	points.show();
+	if(points_to_check.length) {
+		for (let i = 0; i < points_to_check.length; i++) {
+			points_to_check[i].update(points.contain(points_to_check[i]));
+			points_to_check[i].show();
+		}
 	}
+}
+
+function createSome(amount) {
+	for (let i = 0; i < amount; i++)
+		points_to_check.push(new CheckPoint(random(width), random(height)));
 }
 
 function mousePressed() {
 	if (mouseButton === LEFT)
-		figure.add(mouseX, mouseY);
+		points.add(mouseX, mouseY);
 }
 
 function keyPressed() {
 	if (keyCode == CONTROL)
-		point = new PointFigure(mouseX, mouseY);
+		points_to_check.push(new CheckPoint(mouseX, mouseY));
 	if (keyCode == ESCAPE) {
-		point = null;
-		figure.clear();
+		points.clear();
 	}
 }
