@@ -34,16 +34,12 @@ let Points = function() {
 		for (let i = 0; i < p.length; i++) {
 			let f_cond = p[i].y < point.y && p[j].y >= point.y || p[j].y < point.y && p[i].y >= point.y;
 			let s_cond = p[i].x + (point.y - p[i].y) / (p[j].y - p[i].y) * (p[j].x - p[i].x) < point.x;
-				if (f_cond && s_cond)
-					result = !result;
-				j = i;
+			if (f_cond && s_cond)
+				result = !result;
+			j = i;
 		}
 
 		return result;
-	}
-
-	this.clear = function() {
-		p = [];
 	}
 
 	return this;

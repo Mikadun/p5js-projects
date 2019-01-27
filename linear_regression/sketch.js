@@ -17,9 +17,6 @@ let min_ternary_search = function(f, l, r) {
 	return (l + r) / 2;
 }
 
-let get_y = function(k, b, x) {
-	return k * x + b;
-}
 
 let dist_to_line = function(k, b, p) {
 	return abs(k * p.x - p.y + b) / sqrt(k * k + 1);
@@ -30,11 +27,11 @@ let Points = function() {
 	this.p = [];
 
 	this.show = function() {
-		noFill();
+		fill(255);
 		stroke(150);
 		textSize(10);
 		for (let i = 0; i < this.p.length; i++)
-			ellipse(this.p[i].x, this.p[i].y, 3, 3);
+			ellipse(this.p[i].x, this.p[i].y, 4, 4);
 	}
 
 	this.add = function(x, y) {
@@ -49,22 +46,11 @@ let Points = function() {
 		return int(result);
 	}
 
-	this.sum_straight_dist = function(line) {
-		let result = 0;
-		for (let i = 0; i < this.p.length; i++) {
-			result += line.straight_dist(this.p[i]);
-		}
-		console.log("	Straight dist", int(result));
-	}
-
 	this.find_min_line = function(lines) {
 		let global_min = width * height;
 		let line = new Line(0, 0);
 
 		for (let k = -100; k < 100; k += EPS) {
-			// sum dist - functions that receives function
-			// they it calls it with point argument
-
 			let b = min_ternary_search((b) => this.sum_dist((p) => dist_to_line(k, b, p)), -height, 2 * height);
 			let local_min = this.sum_dist((p) => dist_to_line(k, b, p));
 			if (local_min < global_min) {
@@ -87,10 +73,6 @@ let Line = function(k, b) {
 
 	this.show = function() {
 		line(0, this.get_y(0), width, this.get_y(width));
-	}
-
-	this.straight_dist = function(p) {
-		return abs(p.y - this.get_y(p.x));
 	}
 
 	this.dist = function(p) {
