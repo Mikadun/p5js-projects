@@ -25,15 +25,14 @@ let Points = function() {
 	this.min = createVector(-width, -height);
 
 	this.show = function() {
-		noFill();
-		stroke(150);
-		textSize(10);
-		for (let i = 0; i < this.p.length; i++)
-			ellipse(this.p[i].x, this.p[i].y, 3, 3);
-
 		fill(255);
+		stroke(150);
+		for (let i = 0; i < this.p.length; i++)
+			ellipse(this.p[i].x, this.p[i].y, 4, 4);
+
+		fill(0, 255, 0);
 		stroke(0, 255, 0);
-		ellipse(this.min.x, this.min.y, 4, 4);
+		ellipse(this.min.x, this.min.y, 5, 5);
 
 		if (false && this.p.length) {
 			let step = 30;
