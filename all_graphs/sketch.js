@@ -101,6 +101,12 @@ let Graph = function(size) {
 			this.count = 0;
 	}
 
+	this.decrease = function() {
+		this.count--;
+		if (this.count <= 0)
+			this.count = this.edges.length - 1;
+	}
+
 }
 
 let g;
@@ -119,6 +125,10 @@ function draw() {
 }
 
 function mousePressed() {
-	if (mouseButton === LEFT)
-		g.count++;
+	if (mouseButton === LEFT) {
+		if (mouseX > width / 2)
+			g.increase();
+		else
+			g.decrease();
+	}
 }
