@@ -95,6 +95,12 @@ let Graph = function(size) {
 		}
 	}
 
+	this.increase = function() {
+		this.count++;
+		if (this.count >= this.edges.length) 
+			this.count = 0;
+	}
+
 }
 
 let g;
