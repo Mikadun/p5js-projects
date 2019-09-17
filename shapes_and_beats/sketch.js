@@ -67,7 +67,11 @@ Player.prototype.update = function(force = null) {
 
 	if (force) {
 		this.pos.x += force.x * this.speed;
+		if (this.pos.x < this.height || this.pos.x > width + this.height)
+			this.pos.x -= force.x * this.speed;
 		this.pos.y += force.y * this.speed;
+			if (this.pos.y < this.height || this.pos.y > height + this.height)
+			this.pos.y -= force.y * this.speed;
 		this.transform(force, change = true);
 	}
 	this.applyTransform();
@@ -151,8 +155,7 @@ BulletManager.prototype.generate = function() {
 
 //
 
-let OnScreen = function(obj) {
-	const D = 50;
+let OnScreen = function(obj, D = 50) {
 	if (obj.r) {
 		return obj.pos.x + obj.r > -D && obj.pos.x - obj.r < width + D && obj.pos.y + obj.r > -D && obj.pos.y - obj.r < height + D;
 	}
