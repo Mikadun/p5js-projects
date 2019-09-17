@@ -1,7 +1,7 @@
 
 // Player class
 
-let Player = function(x = 0, y = 0, col = palette.BLUE, width = 10, height = 10, speed = 5) {
+let Player = function(x = 0, y = 0, width = 10, height = 10, col = palette.BLUE, speed = 5) {
 
 	this.DIR = createVector(1, 0);
 	this.WIDTH = width;
@@ -17,6 +17,8 @@ let Player = function(x = 0, y = 0, col = palette.BLUE, width = 10, height = 10,
 	this.speed = this.SPEED;
 
 	this.transformStage = 0;
+	this.transformState = 0;
+	this.MAX_TRANSFORM_STAGE = 4;
 }
 
 Player.prototype.draw = function() {
@@ -31,9 +33,9 @@ Player.prototype.draw = function() {
 }
 
 Player.prototype.transform = function(dir = null, change = false) {
-	const LAST_TRANSFORM_STAGE = 4;
 	if (change) {
-		this.transformStage = LAST_TRANSFORM_STAGE;
+		this.transformStage = this.MAX_TRANSFORM_STAGE;
+		this.transformState = 2;
 		this.dir = dir;
 	}
 	else {
@@ -44,11 +46,21 @@ Player.prototype.transform = function(dir = null, change = false) {
 Player.prototype.applyTransform = function() {
 	const TRANSFORM_SPEED = 15;
 
-	this.width = this.WIDTH * (1 + this.transformStage / TRANSFORM_SPEED);
-	this.height = this.HEIGHT * (1 - this.transformStage / TRANSFORM_SPEED);
+	if (this.transformState == 2) {
+		this.width = this.WIDTH * (1 + this.transformStage / TRANSFORM_SPEED);
+		this.height = this.HEIGHT * (1 - this.transformStage / TRANSFORM_SPEED);
+	} else if (this.transformState == 1) {
+		this.width = this.WIDTH * (1 - (this.transformStage - this.MAX_TRANSFORM_STAGE / 2) / TRANSFORM_SPEED);
+		this.height = this.HEIGHT * (1 - (this.transformStage - this.MAX_TRANSFORM_STAGE / 2) / TRANSFORM_SPEED);
+	} else {
+		this.width = this.WIDTH;
+		this.height = this.HEIGHT;
+	}
 
 	if (this.transformStage > 0)
 		this.transformStage--;
+	else if (this.transformState > 0)
+		this.transformState--;
 }
 
 Player.prototype.update = function(force = null) {
