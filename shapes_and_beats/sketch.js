@@ -9,12 +9,17 @@ let Player = function(x = 0, y = 0, width = 10, height = 10, speed = 5, col = pa
 	this.HEIGHT = height;
 
 	this.pos = createVector(x, y);
-	this.col = col;
+	this.col = [0, 255, 255, 255];
+	this.temp_col = this.col;
+	this.depth = 0;
+
+	this.inv_time = 0;
 	
 	this.width = this.WIDTH;
 	this.height = this.HEIGHT;
 	this.dir = this.DIR;
 	this.speed = this.SPEED;
+	this.vel = createVector(0, 0);
 
 	this.transformStage = 0;
 	this.transformState = 0;
@@ -25,7 +30,7 @@ Player.prototype.draw = function() {
 	push();
 	rectMode(RADIUS);
 	noStroke();
-	fill(this.col);
+	fill(color(this.temp_col));
 	translate(this.pos.x, this.pos.y);
 	rotate(this.dir.heading());
 	rect(0, 0, this.width, this.height);
@@ -64,6 +69,15 @@ Player.prototype.applyTransform = function() {
 }
 
 Player.prototype.update = function(force = null) {
+	//this.col = palette.BLUE;
+	this.temp_col = this.col;
+	if (this.inv_time) {
+		if (this.inv_time % 12 > 4)
+			this.temp_col = [255, 255, 255, 255];
+		else
+			this.temp_col = this.col;
+		this.inv_time--;
+	}
 
 	if (force) {
 		this.pos.x += force.x * this.speed;
@@ -75,6 +89,23 @@ Player.prototype.update = function(force = null) {
 		this.transform(force, change = true);
 	}
 	this.applyTransform();
+}
+
+Player.prototype.intersect = function(obj) {
+	let eps = 20
+	if (this.inv_time)
+		return;
+
+	if (pow(this.pos.x - obj.pos.x, 2) + pow(this.pos.y - obj.pos.y, 2) < max(player.width, player.height) + obj.r + eps) {
+		if (this.depth < 10) {
+			this.col[0] += 25;
+			this.col[2] -= 25;
+			this.WIDTH *= 0.95;
+			this.HEIGHT *= 0.95;
+			this.depth++;
+			this.inv_time = 36;
+		}
+	}
 }
 
 let applyForce = function(left = false, up = false, right = false, down = false) {
@@ -98,11 +129,11 @@ Bullet.prototype.draw = function() {
 	fill(this.col);
 	translate(this.pos.x, this.pos.y);
 	rotate(this.speed);
-	if (this.shape = 'rect') {
+	if (this.shape == 'rect') {
 		rectMode(RADIUS);
 		rect(0, 0, this.r, this.r);
 	}
-	if (this.shape = 'circle') {
+	if (this.shape == 'circle') {
 		ellipseMode(RADIUS);
 		ellipse(0, 0, this.r, this.r);
 	}
@@ -153,6 +184,12 @@ BulletManager.prototype.generate = function() {
 	this.bullets.push(new Bullet(x, y, dir_x, dir_y, speed, r));
 }
 
+BulletManager.prototype.intersect = function(p) {
+	for (let i = 0; i < this.bullets.length; i++) {
+		p.intersect(this.bullets[i]);
+	}
+}
+
 //
 
 let OnScreen = function(obj, D = 50) {
@@ -180,26 +217,36 @@ function setup() {
 		BLACK: color("#1e1b1b"),
 		PINK:  color("#ff2071"),
 		BLUE:  color("#00FFFF"),
+		YELLOW: color("#FFFF00"),
 	}
 
 	player = new Player(width / 2, height / 2);
 	bulletManager = new BulletManager();
+	//bulletManager.bullets.push(new Bullet(width / 2, height / 2, 0, 0, 0, 10))
 }
 
 // Draw
 
-function draw() {
-	if (keyIsPressed) {
+function KeyManager() {
+	if (keyIsDown(LEFT_ARROW) || keyIsDown(UP_ARROW) || keyIsDown(RIGHT_ARROW) || keyIsDown(DOWN_ARROW)) {
 		let force = applyForce(keyIsDown(LEFT_ARROW), keyIsDown(UP_ARROW), keyIsDown(RIGHT_ARROW), keyIsDown(DOWN_ARROW))
 		player.update(force);
+	}
+}
+
+function draw() {
+	if (keyIsPressed) {
+		KeyManager();
 	}
 	else {
 		player.update();
 	}
 
-	bulletManager.update();
-	bulletManager.generate();
 	background(palette.BLACK);
-	player.draw();
+
+	bulletManager.generate();
+	bulletManager.update();
+	bulletManager.intersect(player);
 	bulletManager.draw();
+	player.draw();
 }
